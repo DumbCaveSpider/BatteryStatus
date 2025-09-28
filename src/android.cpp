@@ -1,7 +1,8 @@
 #if defined(__ANDROID__)
-#include <Geode/Geode.hpp>
+
 #include <Geode/cocos/platform/android/jni/JniHelper.h>
 #include <jni.h>
+#include <Geode/Geode.hpp>
 namespace battery
 {
     static JNIEnv *getEnvAttached(bool &shouldDetach)
@@ -65,11 +66,14 @@ namespace battery
     {
         bool shouldDetach = false;
         JNIEnv *env = getEnvAttached(shouldDetach);
-        if (!env)
+        if (!env) {
+            log::error("Battery: failed to get JNIEnv");
             return -1;
+        }
         jobject context = getContext(env);
         if (!context)
         {
+            log::error("Battery: getContext() returned null");
             if (shouldDetach)
                 cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
             return -1;
@@ -102,6 +106,10 @@ namespace battery
                     env->DeleteLocalRef(bmCls);
                 env->DeleteLocalRef(bm);
             }
+            else
+            {
+                log::debug("Battery: BatteryManager service is null");
+            }
             if (batterySvc)
                 env->DeleteLocalRef(batterySvc);
             if (ctxCls)
@@ -119,11 +127,14 @@ namespace battery
     {
         bool shouldDetach = false;
         JNIEnv *env = getEnvAttached(shouldDetach);
-        if (!env)
+        if (!env) {
+            log::error("Battery: failed to get JNIEnv for isCharging");
             return false;
+        }
         jobject context = getContext(env);
         if (!context)
         {
+            log::error("Battery: getContext() returned null in isCharging");
             if (shouldDetach)
                 cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
             return false;
@@ -151,6 +162,10 @@ namespace battery
                 env->DeleteLocalRef(bmCls);
             env->DeleteLocalRef(bm);
         }
+        else
+        {
+            log::debug("Battery: BatteryManager service is null in isCharging");
+        }
         if (batterySvc)
             env->DeleteLocalRef(batterySvc);
         if (ctxCls)
@@ -166,11 +181,14 @@ namespace battery
     {
         bool shouldDetach = false;
         JNIEnv *env = getEnvAttached(shouldDetach);
-        if (!env)
+        if (!env) {
+            log::error("Battery: failed to get JNIEnv for isBatterySaver");
             return false;
+        }
         jobject context = getContext(env);
         if (!context)
         {
+            log::error("Battery: getContext() returned null in isBatterySaver");
             if (shouldDetach)
                 cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
             return false;
@@ -198,6 +216,10 @@ namespace battery
                 if (pmClass)
                     env->DeleteLocalRef(pmClass);
                 env->DeleteLocalRef(pm);
+            }
+            else
+            {
+                log::debug("Battery: PowerManager service is null");
             }
             if (pwr)
                 env->DeleteLocalRef(pwr);
