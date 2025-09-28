@@ -1,4 +1,4 @@
-#if defined(__APPLE__) && (GEODE_IS_IOS)
+#if defined(__APPLE__) && (TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR)
 #import <UIKit/UIKit.h>
 
 namespace battery
@@ -47,4 +47,7 @@ namespace battery
         }
     }
 }
+#endif
+
+#endif
 #endif
