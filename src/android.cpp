@@ -35,8 +35,8 @@ static jint getSDKInt(JNIEnv* env) {
 }
 
 int getBatteryLevel() {
-    JNIEnv* env = cocos2d::JniHelper::getEnv();
-    if (!env) return -1;
+    JNIEnv* env = nullptr;
+    if (cocos2d::JniHelper::getJavaVM()->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK || !env) return -1;
     jobject context = getContext(env);
     if (!context) return -1;
 
@@ -101,8 +101,8 @@ int getBatteryLevel() {
 }
 
 bool isCharging() {
-    JNIEnv* env = cocos2d::JniHelper::getEnv();
-    if (!env) return false;
+    JNIEnv* env = nullptr;
+    if (cocos2d::JniHelper::getJavaVM()->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK || !env) return false;
     jobject context = getContext(env);
     if (!context) return false;
 
@@ -160,8 +160,8 @@ bool isCharging() {
 }
 
 bool isBatterySaver() {
-    JNIEnv* env = cocos2d::JniHelper::getEnv();
-    if (!env) return false;
+    JNIEnv* env = nullptr;
+    if (cocos2d::JniHelper::getJavaVM()->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK || !env) return false;
     jobject context = getContext(env);
     if (!context) return false;
 
