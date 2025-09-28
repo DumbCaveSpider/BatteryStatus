@@ -18,4 +18,6 @@ Shows and display your device's battery status in game.
 
 - <cr>Adding android support is super duper complex compared to other devices. This involves having to tinker coco2dx jnihelper and all of those stuff that I can't be bothered to do. Plus took me 4 hours to figure it out and still can't get it to work. Even testing it intensively I still couldn't get it working :/</c>
 
-*If you had Battery Info API mod installed before, please uninstall it before installing this mod.*
+<co>*If you had Battery Info API mod installed before, please uninstall it before installing this mod.*</c>
+
+![king](arcticwoof.twitch_interactive/king.png)
