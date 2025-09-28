@@ -17,19 +17,31 @@ protected:
     bool init() override;
     static BatteryStatus *instance;
 
-    cocos2d::CCNode *m_lowBat;
-    cocos2d::CCNode *m_halfBat;
-    cocos2d::CCNode *m_fullBat;
-    cocos2d::CCNode *m_chargingBat;
-    cocos2d::CCNode *m_emptyBat;
+    CCSprite *m_lowBat;
+    CCSprite *m_halfBat;
+    CCSprite *m_fullBat;
+    CCSprite *m_chargingBat;
+    CCSprite *m_emptyBat;
+
+    CCLabelBMFont *m_percentageLabel;
 
     // last known state
     int m_lastLevel;
     bool m_lastCharging;
     bool m_lastSaver;
+    bool m_initialized;
+
+    // battery status code:
+    // 0 = unknown/uninitialized
+    // 1 = empty battery
+    // 2 = low battery
+    // 3 = half battery
+    // 4 = full battery
+    int m_status;
 
     // scheduled update
     void updateBattery(float dt);
+    void onEnter() override;
 
 public:
     BatteryStatus();
