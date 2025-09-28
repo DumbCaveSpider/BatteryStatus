@@ -11,6 +11,11 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 project(BatteryStatus VERSION 1.0.0)
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
+
+if ("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS" OR IOS)
+    list(APPEND SOURCES src/ios.mm)
+endif()
+
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
 if (NOT DEFINED ENV{GEODE_SDK})
