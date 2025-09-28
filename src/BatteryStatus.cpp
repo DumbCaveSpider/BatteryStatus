@@ -285,8 +285,16 @@ void BatteryStatus::onEnter()
 
     // completely disable if not enabled
     if (!enabled)
+    {
+        m_lowBat->setVisible(false);
+        m_halfBat->setVisible(false);
+        m_fullBat->setVisible(false);
+        m_chargingBat->setVisible(false);
+        m_emptyBat->setVisible(false);
+        if (m_percentageLabel)
+            m_percentageLabel->setVisible(false);
         return;
-
+    }
     // position for all sprites
     auto winSize = CCDirector::sharedDirector()->getWinSize();
     auto pos = Mod::get()->getSettingValue<std::string>("position");
