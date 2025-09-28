@@ -14,6 +14,7 @@ int getBatteryLevel() {
         "()I")) {
         level = mi.env->CallStaticIntMethod(mi.classID, mi.methodID);
         mi.env->DeleteLocalRef(mi.classID);
+        log::debug("get battery on android");
     }
     return level;
 }
@@ -27,6 +28,7 @@ bool isCharging() {
         "()Z")) {
         charging = mi.env->CallStaticBooleanMethod(mi.classID, mi.methodID);
         mi.env->DeleteLocalRef(mi.classID);
+        log::debug("is charging on android");
     }
     return charging;
 }
@@ -40,6 +42,7 @@ bool isBatterySaver() {
         "()Z")) {
         saver = mi.env->CallStaticBooleanMethod(mi.classID, mi.methodID);
         mi.env->DeleteLocalRef(mi.classID);
+        log::debug("is battery saver on android");
     }
     return saver;
 }
