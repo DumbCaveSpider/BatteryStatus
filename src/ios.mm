@@ -4,6 +4,8 @@
 #import <UIKit/UIKit.h>
 #import <Geode/Geode.hpp>
 
+using namespace geode::prelude;
+
 namespace battery
 {
     int getBatteryLevel()
