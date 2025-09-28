@@ -2,14 +2,16 @@
 #include <jni.h>
 #include <android/native_activity.h>
 #include <android/log.h>
+
 #include <Geode/cocos/platform/android/jni/JniHelper.h>
 
 namespace battery {
 
+
 int getBatteryLevel() {
-    JniMethodInfo methodInfo;
+    cocos2d::JniMethodInfo methodInfo;
     int batteryLevel = -1;
-    if (geode::jni::JniHelper::getStaticMethodInfo(methodInfo,
+    if (cocos2d::JniHelper::getStaticMethodInfo(methodInfo,
         "org/cocos2dx/lib/Cocos2dxHelper",
         "getBatteryLevel",
         "()I")) {
@@ -20,9 +22,9 @@ int getBatteryLevel() {
 }
 
 bool isCharging() {
-    JniMethodInfo methodInfo;
+    cocos2d::JniMethodInfo methodInfo;
     bool charging = false;
-    if (geode::jni::JniHelper::getStaticMethodInfo(methodInfo,
+    if (cocos2d::JniHelper::getStaticMethodInfo(methodInfo,
         "org/cocos2dx/lib/Cocos2dxHelper",
         "isCharging",
         "()Z")) {
@@ -33,9 +35,9 @@ bool isCharging() {
 }
 
 bool isBatterySaver() {
-    JniMethodInfo methodInfo;
+    cocos2d::JniMethodInfo methodInfo;
     bool saver = false;
-    if (geode::jni::JniHelper::getStaticMethodInfo(methodInfo,
+    if (cocos2d::JniHelper::getStaticMethodInfo(methodInfo,
         "org/cocos2dx/lib/Cocos2dxHelper",
         "isBatterySaver",
         "()Z")) {
