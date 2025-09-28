@@ -37,16 +37,6 @@ namespace battery
     {
         cocos2d::JniMethodInfo mi;
         if (cocos2d::JniHelper::getStaticMethodInfo(mi,
-                                                    "org/cocos2dx/lib/Cocos2dxHelper",
-                                                    "getActivity",
-                                                    "()Landroid/app/Activity;"))
-        {
-            jobject activity = env->CallStaticObjectMethod(mi.classID, mi.methodID);
-            clearIfException(env);
-            env->DeleteLocalRef(mi.classID);
-            return activity;
-        }
-        if (cocos2d::JniHelper::getStaticMethodInfo(mi,
                                                     "org/cocos2dx/lib/Cocos2dxActivity",
                                                     "getContext",
                                                     "()Landroid/content/Context;"))
@@ -151,6 +141,7 @@ namespace battery
         {
             jclass bmCls = env->FindClass("android/os/BatteryManager");
             jmethodID isCh = bmCls ? env->GetMethodID(bmCls, "isCharging", "()Z") : nullptr;
+            clearIfException(env);
             if (isCh)
             {
                 jboolean ch = env->CallBooleanMethod(bm, isCh);
@@ -197,6 +188,7 @@ namespace battery
             {
                 jclass pmClass = env->GetObjectClass(pm);
                 jmethodID isPSM = pmClass ? env->GetMethodID(pmClass, "isPowerSaveMode", "()Z") : nullptr;
+                clearIfException(env);
                 if (isPSM)
                 {
                     jboolean on = env->CallBooleanMethod(pm, isPSM);
