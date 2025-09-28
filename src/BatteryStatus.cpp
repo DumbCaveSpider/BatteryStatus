@@ -195,6 +195,16 @@ void BatteryStatus::updateBattery(float dt)
             m_emptyBat->setVisible(false);
             return;
         }
+
+        // if saver is on, change all of the colors to default color
+        if (saver)
+        {
+            m_fullBat->setColor({255, 255, 255});
+            m_halfBat->setColor({255, 255, 255});
+            m_lowBat->setColor({255, 255, 255});
+            m_emptyBat->setColor({255, 255, 255});
+            m_chargingBat->setColor({255, 255, 255});
+        }
     }
     else if (type == "Percentage")
     {
@@ -233,15 +243,15 @@ void BatteryStatus::updateBattery(float dt)
         // add charging or saver text is charging or saver is on
         if (saver)
         {
-            m_percentageLabel->setString(fmt::format("Battery:\n{}% (Saver)", level).c_str());
+            m_percentageLabel->setString(fmt::format("Battery:\n{}%\n(Saver)", level).c_str());
         }
-        else if (charging)
+        if (charging)
         {
-            m_percentageLabel->setString(fmt::format("Battery:\n{}% (Charging)", level).c_str());
+            m_percentageLabel->setString(fmt::format("Battery:\n{}%\n(Charging)", level).c_str());
         }
-        else if (charging && saver)
+        if (charging && saver)
         {
-            m_percentageLabel->setString(fmt::format("Battery:\n{}% (Charging, Saver)", level).c_str());
+            m_percentageLabel->setString(fmt::format("Battery:\n{}%\n(Charging, Saver)", level).c_str());
         }
 
         // if the level is unknown -1, show unknown text
