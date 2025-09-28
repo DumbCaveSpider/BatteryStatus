@@ -4,7 +4,7 @@
 #include <jni.h>
 namespace battery
 {
-    static JNIEnv* getEnvAttached(bool &shouldDetach)
+    static JNIEnv *getEnvAttached(bool &shouldDetach)
     {
         shouldDetach = false;
         JNIEnv *env = nullptr;
@@ -70,7 +70,8 @@ namespace battery
         jobject context = getContext(env);
         if (!context)
         {
-            if (shouldDetach) cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
+            if (shouldDetach)
+                cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
             return -1;
         }
 
@@ -81,16 +82,12 @@ namespace battery
             jclass ctxCls = env->GetObjectClass(context);
             jmethodID getSys = ctxCls ? env->GetMethodID(ctxCls, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;") : nullptr;
             clearIfException(env);
-            jclass contextClass = env->FindClass("android/content/Context");
-            jfieldID batterySvcField = contextClass ? env->GetStaticFieldID(contextClass, "BATTERY_SERVICE", "Ljava/lang/String;") : nullptr;
-            clearIfException(env);
-            jstring batterySvc = (jstring)(batterySvcField ? env->GetStaticObjectField(contextClass, batterySvcField) : nullptr);
-            clearIfException(env);
+            jstring batterySvc = env->NewStringUTF("batterymanager");
             jobject bm = (getSys && batterySvc) ? env->CallObjectMethod(context, getSys, batterySvc) : nullptr;
             clearIfException(env);
             if (bm)
             {
-                jclass bmCls = env->FindClass("android/os/BatteryManager");
+                jclass bmCls = env->GetObjectClass(bm);
                 jmethodID getIntProp = bmCls ? env->GetMethodID(bmCls, "getIntProperty", "(I)I") : nullptr;
                 clearIfException(env);
                 const jint BATTERY_PROPERTY_CAPACITY = 4;
@@ -101,16 +98,20 @@ namespace battery
                     if (lvl >= 0 && lvl <= 100)
                         result = static_cast<int>(lvl);
                 }
-                if (bmCls) env->DeleteLocalRef(bmCls);
+                if (bmCls)
+                    env->DeleteLocalRef(bmCls);
                 env->DeleteLocalRef(bm);
             }
-            if (batterySvc) env->DeleteLocalRef(batterySvc);
-            if (contextClass) env->DeleteLocalRef(contextClass);
-            if (ctxCls) env->DeleteLocalRef(ctxCls);
+            if (batterySvc)
+                env->DeleteLocalRef(batterySvc);
+            if (ctxCls)
+                env->DeleteLocalRef(ctxCls);
         }
 
-        if (context) env->DeleteLocalRef(context);
-        if (shouldDetach) cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
+        if (context)
+            env->DeleteLocalRef(context);
+        if (shouldDetach)
+            cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
         return result;
     }
 
@@ -123,7 +124,8 @@ namespace battery
         jobject context = getContext(env);
         if (!context)
         {
-            if (shouldDetach) cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
+            if (shouldDetach)
+                cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
             return false;
         }
 
@@ -131,15 +133,12 @@ namespace battery
         jclass ctxCls = env->GetObjectClass(context);
         jmethodID getSys = ctxCls ? env->GetMethodID(ctxCls, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;") : nullptr;
         clearIfException(env);
-        jclass contextClass = env->FindClass("android/content/Context");
-        jfieldID batterySvcField = contextClass ? env->GetStaticFieldID(contextClass, "BATTERY_SERVICE", "Ljava/lang/String;") : nullptr;
-        jstring batterySvc = (jstring)(batterySvcField ? env->GetStaticObjectField(contextClass, batterySvcField) : nullptr);
-        clearIfException(env);
+        jstring batterySvc = env->NewStringUTF("batterymanager");
         jobject bm = (getSys && batterySvc) ? env->CallObjectMethod(context, getSys, batterySvc) : nullptr;
         clearIfException(env);
         if (bm)
         {
-            jclass bmCls = env->FindClass("android/os/BatteryManager");
+            jclass bmCls = env->GetObjectClass(bm);
             jmethodID isCh = bmCls ? env->GetMethodID(bmCls, "isCharging", "()Z") : nullptr;
             clearIfException(env);
             if (isCh)
@@ -148,15 +147,18 @@ namespace battery
                 clearIfException(env);
                 result = (ch == JNI_TRUE);
             }
-            if (bmCls) env->DeleteLocalRef(bmCls);
+            if (bmCls)
+                env->DeleteLocalRef(bmCls);
             env->DeleteLocalRef(bm);
         }
-        if (batterySvc) env->DeleteLocalRef(batterySvc);
-        if (contextClass) env->DeleteLocalRef(contextClass);
-        if (ctxCls) env->DeleteLocalRef(ctxCls);
+        if (batterySvc)
+            env->DeleteLocalRef(batterySvc);
+        if (ctxCls)
+            env->DeleteLocalRef(ctxCls);
 
         env->DeleteLocalRef(context);
-        if (shouldDetach) cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
+        if (shouldDetach)
+            cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
         return result;
     }
 
@@ -169,7 +171,8 @@ namespace battery
         jobject context = getContext(env);
         if (!context)
         {
-            if (shouldDetach) cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
+            if (shouldDetach)
+                cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
             return false;
         }
 
@@ -198,13 +201,16 @@ namespace battery
                     env->DeleteLocalRef(pmClass);
                 env->DeleteLocalRef(pm);
             }
-            if (pwr) env->DeleteLocalRef(pwr);
-            if (contextClass) env->DeleteLocalRef(contextClass);
+            if (pwr)
+                env->DeleteLocalRef(pwr);
+            if (contextClass)
+                env->DeleteLocalRef(contextClass);
         }
         if (ctxClass)
             env->DeleteLocalRef(ctxClass);
         env->DeleteLocalRef(context);
-        if (shouldDetach) cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
+        if (shouldDetach)
+            cocos2d::JniHelper::getJavaVM()->DetachCurrentThread();
         return result;
     }
 
