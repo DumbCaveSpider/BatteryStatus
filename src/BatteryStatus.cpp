@@ -83,25 +83,26 @@ void BatteryStatus::updateBattery(float dt)
     bool charging = battery::isCharging();
     bool saver = battery::isBatterySaver();
 
-    // debug: print runtime battery and mode info
-    auto type = Mod::get()->getSettingValue<std::string>("type");
-    auto pos = Mod::get()->getSettingValue<std::string>("position");
-    log::debug("BatteryStatus::updateBattery - level={} charging={} saver={} type={} pos={}", level, charging, saver, type, pos);
-
-    // if nothing changed, do nothing
-    if (level == m_lastLevel && charging == m_lastCharging && saver == m_lastSaver)
-        return;
-
-    m_lastLevel = level;
-    m_lastCharging = charging;
-    m_lastSaver = saver;
-
     int lowThreshold = Mod::get()->getSettingValue<int>("lowThreshold");
     int mediumThreshold = Mod::get()->getSettingValue<int>("mediumThreshold");
     int highThreshold = Mod::get()->getSettingValue<int>("highThreshold");
 
+    auto type = Mod::get()->getSettingValue<std::string>("displayStatus");
+    auto pos = Mod::get()->getSettingValue<std::string>("position");
+    bool enabled = Mod::get()->getSettingValue<bool>("enabled");
+
+    // update last-known state
+    m_lastLevel = level;
+    m_lastCharging = charging;
+    m_lastSaver = saver;
+
+    // disabled
+    if (!enabled)
+        return;
+    log::debug("BatteryStatus::updateBattery - level={} charging={} saver={} type={} pos={} status={}", level, charging, saver, type, pos, m_status);
+
     // show icon if the type is set to icon
-    if (Mod::get()->getSettingValue<std::string>("type") == "Icon")
+    if (type == "Icon")
     {
         // default colors
         m_fullBat->setColor({0, 255, 0});
@@ -139,45 +140,45 @@ void BatteryStatus::updateBattery(float dt)
         switch (m_status)
         {
         case 4:
-            m_fullBat->setVisible(true);
+            static_cast<CCSprite *>(m_fullBat)->setVisible(true);
             // hide others
-            m_halfBat->setVisible(false);
-            m_lowBat->setVisible(false);
-            m_chargingBat->setVisible(false);
-            m_emptyBat->setVisible(false);
+            static_cast<CCSprite *>(m_halfBat)->setVisible(false);
+            static_cast<CCSprite *>(m_lowBat)->setVisible(false);
+            static_cast<CCSprite *>(m_chargingBat)->setVisible(false);
+            static_cast<CCSprite *>(m_emptyBat)->setVisible(false);
             break;
         case 3:
-            m_halfBat->setVisible(true);
+            static_cast<CCSprite *>(m_halfBat)->setVisible(true);
             // hide others
-            m_lowBat->setVisible(false);
-            m_chargingBat->setVisible(false);
-            m_emptyBat->setVisible(false);
-            m_fullBat->setVisible(false);
+            static_cast<CCSprite *>(m_lowBat)->setVisible(false);
+            static_cast<CCSprite *>(m_chargingBat)->setVisible(false);
+            static_cast<CCSprite *>(m_emptyBat)->setVisible(false);
+            static_cast<CCSprite *>(m_fullBat)->setVisible(false);
             break;
         case 2:
-            m_lowBat->setVisible(true);
+            static_cast<CCSprite *>(m_lowBat)->setVisible(true);
             // hide others
-            m_chargingBat->setVisible(false);
-            m_emptyBat->setVisible(false);
-            m_fullBat->setVisible(false);
-            m_halfBat->setVisible(false);
+            static_cast<CCSprite *>(m_chargingBat)->setVisible(false);
+            static_cast<CCSprite *>(m_emptyBat)->setVisible(false);
+            static_cast<CCSprite *>(m_fullBat)->setVisible(false);
+            static_cast<CCSprite *>(m_halfBat)->setVisible(false);
             break;
         case 1:
-            m_emptyBat->setVisible(true);
+            static_cast<CCSprite *>(m_emptyBat)->setVisible(true);
             // hide others
-            m_chargingBat->setVisible(false);
-            m_fullBat->setVisible(false);
-            m_halfBat->setVisible(false);
-            m_lowBat->setVisible(false);
+            static_cast<CCSprite *>(m_chargingBat)->setVisible(false);
+            static_cast<CCSprite *>(m_fullBat)->setVisible(false);
+            static_cast<CCSprite *>(m_halfBat)->setVisible(false);
+            static_cast<CCSprite *>(m_lowBat)->setVisible(false);
             break;
         default:
-            m_emptyBat->setVisible(true);
+            static_cast<CCSprite *>(m_emptyBat)->setVisible(true);
             // hide others
-            m_chargingBat->setVisible(false);
-            m_fullBat->setVisible(false);
-            m_halfBat->setVisible(false);
-            m_lowBat->setVisible(false);
-            m_emptyBat->setColor({128, 128, 128});
+            static_cast<CCSprite *>(m_chargingBat)->setVisible(false);
+            static_cast<CCSprite *>(m_fullBat)->setVisible(false);
+            static_cast<CCSprite *>(m_halfBat)->setVisible(false);
+            static_cast<CCSprite *>(m_lowBat)->setVisible(false);
+            static_cast<CCSprite *>(m_emptyBat)->setColor({128, 128, 128});
             break;
         }
 
@@ -195,19 +196,20 @@ void BatteryStatus::updateBattery(float dt)
             return;
         }
     }
-    else if (Mod::get()->getSettingValue<std::string>("type") == "Percentage")
+    else if (type == "Percentage")
     {
         // set percentage label
         if (!m_percentageLabel)
         {
-            m_percentageLabel = CCLabelBMFont::create("0%", "bigFont.fnt");
+            m_percentageLabel = CCLabelBMFont::create("Battery:\n0%", "bigFont.fnt");
+            m_percentageLabel->setAlignment(kCCTextAlignmentCenter);
             this->addChild(m_percentageLabel);
         }
 
         // update label text every check
         if (m_percentageLabel)
         {
-            m_percentageLabel->setString(fmt::format("{}%", level).c_str());
+            m_percentageLabel->setString(fmt::format("Battery:\n{}%", level).c_str());
         }
 
         // change text color
@@ -227,6 +229,27 @@ void BatteryStatus::updateBattery(float dt)
         {
             m_percentageLabel->setColor({255, 0, 0});
         }
+
+        // add charging or saver text is charging or saver is on
+        if (saver)
+        {
+            m_percentageLabel->setString(fmt::format("Battery:\n{}% (Saver)", level).c_str());
+        }
+        else if (charging)
+        {
+            m_percentageLabel->setString(fmt::format("Battery:\n{}% (Charging)", level).c_str());
+        }
+        else if (charging && saver)
+        {
+            m_percentageLabel->setString(fmt::format("Battery:\n{}% (Charging, Saver)", level).c_str());
+        }
+
+        // if the level is unknown -1, show unknown text
+        if (level == -1)
+        {
+            m_percentageLabel->setString("Battery:\nUnknown");
+            m_percentageLabel->setColor({128, 128, 128});
+        }
     }
 };
 
@@ -234,12 +257,18 @@ void BatteryStatus::onEnter()
 {
     CCMenu::onEnter();
 
+    bool enabled = Mod::get()->getSettingValue<bool>("enabled");
+
+    // completely disable if not enabled
+    if (!enabled)
+        return;
+
     // position for all sprites
     auto winSize = CCDirector::sharedDirector()->getWinSize();
     auto pos = Mod::get()->getSettingValue<std::string>("position");
     int opacity = Mod::get()->getSettingValue<int>("opacity");
     float scale = Mod::get()->getSettingValue<float>("scale");
-    auto type = Mod::get()->getSettingValue<std::string>("type");
+    auto type = Mod::get()->getSettingValue<std::string>("displayStatus");
 
     log::debug("BatteryStatus::onEnter - type={} position={} scale={} opacity={}", type, pos, scale, opacity);
 
@@ -252,9 +281,8 @@ void BatteryStatus::onEnter()
 
     if (m_percentageLabel)
         m_percentageLabel->setVisible(false);
-
     // only if the type is icon
-    if (Mod::get()->getSettingValue<std::string>("type") == "Icon")
+    if (type == "Icon")
     {
         if (pos == "Top Left")
         {
@@ -315,12 +343,12 @@ void BatteryStatus::onEnter()
             m_chargingBat->setAnchorPoint({1, 0});
             m_emptyBat->setAnchorPoint({1, 0});
         }
-        else if (pos == "Center")
+        else if (pos == "Top Center")
         {
-            m_lowBat->setPosition({winSize.width / 2, winSize.height / 2});
-            m_halfBat->setPosition({winSize.width / 2, winSize.height / 2});
-            m_fullBat->setPosition({winSize.width / 2, winSize.height / 2});
-            m_chargingBat->setPosition({winSize.width / 2, winSize.height / 2});
+            m_lowBat->setPosition({winSize.width / 2, winSize.height - 10});
+            m_halfBat->setPosition({winSize.width / 2, winSize.height - 10});
+            m_fullBat->setPosition({winSize.width / 2, winSize.height - 10});
+            m_chargingBat->setPosition({winSize.width / 2, winSize.height - 10});
             m_emptyBat->setPosition({winSize.width / 2, winSize.height / 2});
 
             // set anchor point to center
@@ -398,7 +426,7 @@ void BatteryStatus::onEnter()
         m_chargingBat->setOpacity(opacity);
         m_emptyBat->setOpacity(opacity);
     }
-    else if (Mod::get()->getSettingValue<std::string>("type") == "Percentage")
+    else if (type == "Percentage")
     {
         // set percentage label
         if (!m_percentageLabel)
@@ -493,6 +521,7 @@ void BatteryStatus::onEnter()
     }
 
     // run an immediate update then schedule periodic checks every 1 second
+    float checkRate = Mod::get()->getSettingValue<float>("checkRate");
     updateBattery(0);
-    this->schedule(schedule_selector(BatteryStatus::updateBattery), 1.0f);
+    this->schedule(schedule_selector(BatteryStatus::updateBattery), checkRate);
 }

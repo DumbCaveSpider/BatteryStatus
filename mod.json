@@ -38,25 +38,17 @@
 			],
 			"default": "Icon"
 		},
-		"iconTitle": {
-			"type": "title",
-			"name": "Icon Settings"
-		},
-		"opacity": {
-			"type": "int",
-			"name": "Status Opacity",
-			"description": "Set the opacity of the battery status icon/text (0-255).",
-			"default": 255,
-			"min": 10,
-			"max": 255
-		},
-		"scale": {
+		"checkRate": {
 			"type": "float",
-			"name": "Status Scale",
-			"description": "Set the scale of the battery status icon/text (0.1-3.0).",
+			"name": "Battery Check Rate",
+			"description": "Set how often (in seconds) to check the battery status.",
 			"default": 1.0,
-			"min": 0.1,
-			"max": 2.0
+			"min": 1.0,
+			"max": 60.0
+		},
+		"statusTitle": {
+			"type": "title",
+			"name": "Status Settings"
 		},
 		"position": {
 			"type": "string",
@@ -74,9 +66,25 @@
 			],
 			"default": "Top Right"
 		},
-		"statusTitle": {
+		"opacity": {
+			"type": "int",
+			"name": "Status Opacity",
+			"description": "Set the opacity of the battery status icon/text (0-255).",
+			"default": 100,
+			"min": 10,
+			"max": 255
+		},
+		"scale": {
+			"type": "float",
+			"name": "Status Scale",
+			"description": "Set the scale of the battery status icon/text (0.1-3.0).",
+			"default": 0.3,
+			"min": 0.1,
+			"max": 2.0
+		},
+		"batteryTitle": {
 			"type": "title",
-			"name": "Status Settings"
+			"name": "Battery Settings"
 		},
 		"lowThreshold": {
 			"type": "int",
