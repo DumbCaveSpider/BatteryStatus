@@ -109,13 +109,12 @@ void BatteryStatus::updateBattery(float dt)
         {
             m_percentageLabel->setVisible(false);
         }
-        
+
         // default colors
         m_fullBat->setColor({0, 255, 0});
         m_halfBat->setColor({255, 255, 0});
         m_lowBat->setColor({255, 165, 0});
         m_emptyBat->setColor({255, 0, 0});
-        m_chargingBat->setColor({0, 191, 255});
 
         // hide all
         m_lowBat->setVisible(false);
@@ -128,18 +127,27 @@ void BatteryStatus::updateBattery(float dt)
         if (level >= highThreshold)
         {
             m_status = 4;
+            m_chargingBat->setColor({0, 255, 0});
         }
         else if (level >= mediumThreshold)
         {
             m_status = 3;
+            m_chargingBat->setColor({255, 255, 0});
         }
         else if (level >= lowThreshold)
         {
             m_status = 2;
+            m_chargingBat->setColor({255, 165, 0});
         }
-        else if (level >= -1)
-        { // -1 = unknown level
+        else if (level >= 0)
+        {
             m_status = 1;
+            m_chargingBat->setColor({255, 0, 0});
+        }
+        else
+        { // -1 = unknown level
+            m_status = -1;
+            m_chargingBat->setColor({191, 191, 191});
         }
 
         // show the appropriate sprite for the status
@@ -190,6 +198,16 @@ void BatteryStatus::updateBattery(float dt)
 
         log::debug("BatteryStatus::updateBattery - computed status={} (level={})", m_status, level);
 
+        // if saver is on, change all of the colors to default color
+        if (saver)
+        {
+            m_fullBat->setColor({255, 255, 255});
+            m_halfBat->setColor({255, 255, 255});
+            m_lowBat->setColor({255, 255, 255});
+            m_emptyBat->setColor({255, 255, 255});
+            m_chargingBat->setColor({255, 255, 255});
+        }
+
         // if charging, show charging sprite on top but keep status derived from level
         if (charging)
         {
@@ -200,16 +218,6 @@ void BatteryStatus::updateBattery(float dt)
             m_fullBat->setVisible(false);
             m_emptyBat->setVisible(false);
             return;
-        }
-
-        // if saver is on, change all of the colors to default color
-        if (saver)
-        {
-            m_fullBat->setColor({255, 255, 255});
-            m_halfBat->setColor({255, 255, 255});
-            m_lowBat->setColor({255, 255, 255});
-            m_emptyBat->setColor({255, 255, 255});
-            m_chargingBat->setColor({255, 255, 255});
         }
     }
     else if (type == "Percentage")
