@@ -10,5 +10,32 @@
 	"name": "Battery Status",
 	"version": "v1.0.0",
 	"developer": "ArcticWoof",
-	"description": "Shows your device battery status and percentage"
+	"description": "Shows your device battery status in game",
+	"resources": {
+		"sprites": [
+			"resources/*"
+		]
+	},
+	"settings": {
+		"enabled": {
+			"type": "bool",
+			"name": "Enabled",
+			"description": "Enable or disable the mod",
+			"default": true
+		},
+		"displayStatus": {
+			"type": "string",
+			"name": "Display Type",
+			"description": "Select which type to display the battery status.",
+			"one-of": [
+				"Icon",
+				"Text"
+			],
+			"default": "Icon"
+		},
+		"iconTitle": {
+			"type": "title",
+			"name": "Icon Settings"
+		}
+	}
 }

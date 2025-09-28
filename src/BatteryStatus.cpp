@@ -46,11 +46,43 @@ bool BatteryStatus::init()
 
     auto scene = CCDirector::sharedDirector()->getRunningScene();
     auto winSize = CCDirector::sharedDirector()->getWinSize();
-    // show a text label with battery percentage and charging status
-    auto label = CCLabelBMFont::create(fmt::format("Battery: {}", getBatteryLevel()).c_str(), "bigFont.fnt");
-    label->setPosition({winSize.width / 2, winSize.height / 2});
-    label->setScale(0.5f);
-    addChild(label);
+
+    // sprites
+    auto lowBat = CCSprite::create("low.png"_spr);
+    auto halfBat = CCSprite::create("half.png"_spr);
+    auto fullBat = CCSprite::create("full.png"_spr);
+    auto chargingBat = CCSprite::create("charging.png"_spr);
+    auto emptyBat = CCSprite::create("empty.png"_spr);
+
+    // check battery status
+    log::debug("Battery level : {}", getBatteryLevel());
+    log::debug("Is charging? : {}", isCharging());
+    log::debug("Is battery saver? : {}", isBatterySaver());
+
+    // display battery status icon
+    if (isCharging()) {
+        addChild(chargingBat);
+        chargingBat->setPosition({winSize.width - 50, winSize.height - 50});
+    }
+    else {
+        int level = getBatteryLevel();
+        if (level >= 75) {
+            addChild(fullBat);
+            fullBat->setPosition({winSize.width - 50, winSize.height - 50});
+        }
+        else if (level >= 30) {
+            addChild(halfBat);
+            halfBat->setPosition({winSize.width - 50, winSize.height - 50});
+        }
+        else if (level > 0) {
+            addChild(lowBat);
+            lowBat->setPosition({winSize.width - 50, winSize.height - 50});
+        }
+        else {
+            addChild(emptyBat);
+            emptyBat->setPosition({winSize.width - 50, winSize.height - 50});
+        }
+    }
 
     return true;
 }
