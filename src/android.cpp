@@ -1,8 +1,10 @@
 #if defined(__ANDROID__)
 
+#include <Geode/Geode.hpp>
 #include <Geode/cocos/platform/android/jni/JniHelper.h>
 #include <jni.h>
-#include <Geode/Geode.hpp>
+
+using namespace geode::prelude;
 namespace battery
 {
     static JNIEnv *getEnvAttached(bool &shouldDetach)
