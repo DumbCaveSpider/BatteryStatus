@@ -181,9 +181,7 @@ namespace battery
         bool result = false;
         if (getSys)
         {
-            jclass contextClass = env->FindClass("android/content/Context");
-            jfieldID powerSvcField = contextClass ? env->GetStaticFieldID(contextClass, "POWER_SERVICE", "Ljava/lang/String;") : nullptr;
-            jstring pwr = (jstring)(powerSvcField ? env->GetStaticObjectField(contextClass, powerSvcField) : nullptr);
+            jstring pwr = env->NewStringUTF("power");
             clearIfException(env);
             jobject pm = (pwr ? env->CallObjectMethod(context, getSys, pwr) : nullptr);
             clearIfException(env);
@@ -203,8 +201,6 @@ namespace battery
             }
             if (pwr)
                 env->DeleteLocalRef(pwr);
-            if (contextClass)
-                env->DeleteLocalRef(contextClass);
         }
         if (ctxClass)
             env->DeleteLocalRef(ctxClass);
