@@ -187,12 +187,12 @@ void BatteryStatus::updateBattery(float dt)
             break;
         default:
             static_cast<CCSprite *>(m_emptyBat)->setVisible(true);
+            static_cast<CCSprite *>(m_emptyBat)->setColor({128, 128, 128});
             // hide others
             static_cast<CCSprite *>(m_chargingBat)->setVisible(false);
             static_cast<CCSprite *>(m_fullBat)->setVisible(false);
             static_cast<CCSprite *>(m_halfBat)->setVisible(false);
             static_cast<CCSprite *>(m_lowBat)->setVisible(false);
-            static_cast<CCSprite *>(m_emptyBat)->setColor({128, 128, 128});
             break;
         }
 
