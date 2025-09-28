@@ -145,7 +145,6 @@ namespace battery
     {
         @autoreleasepool
         {
-            // macOS 10.14+ supports Low Power Mode
             if (@available(macOS 10.14, *))
             {
                 NSProcessInfo *processInfo = [NSProcessInfo processInfo];
