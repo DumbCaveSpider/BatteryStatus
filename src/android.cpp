@@ -47,8 +47,30 @@ namespace battery
             jobject ctx = env->CallStaticObjectMethod(mi.classID, mi.methodID);
             clearIfException(env);
             env->DeleteLocalRef(mi.classID);
-            return ctx;
+            if (ctx)
+            {
+                log::debug("Battery: obtained Context via Cocos2dxActivity.getContext()");
+                return ctx;
+            }
         }
+
+        log::debug("Battery: Cocos2dxActivity.getContext() unavailable, trying Cocos2dxHelper.getActivity()");
+        if (cocos2d::JniHelper::getStaticMethodInfo(mi,
+                                                    "org/cocos2dx/lib/Cocos2dxHelper",
+                                                    "getActivity",
+                                                    "()Landroid/app/Activity;"))
+        {
+            jobject act = env->CallStaticObjectMethod(mi.classID, mi.methodID);
+            clearIfException(env);
+            env->DeleteLocalRef(mi.classID);
+            if (act)
+            {
+                log::debug("Battery: obtained Activity via Cocos2dxHelper.getActivity()");
+                return act;
+            }
+        }
+
+        log::debug("Battery: failed to obtain Context via known helpers");
         return nullptr;
     }
 
@@ -68,7 +90,8 @@ namespace battery
     {
         bool shouldDetach = false;
         JNIEnv *env = getEnvAttached(shouldDetach);
-        if (!env) {
+        if (!env)
+        {
             log::error("Battery: failed to get JNIEnv");
             return -1;
         }
@@ -129,7 +152,8 @@ namespace battery
     {
         bool shouldDetach = false;
         JNIEnv *env = getEnvAttached(shouldDetach);
-        if (!env) {
+        if (!env)
+        {
             log::error("Battery: failed to get JNIEnv for isCharging");
             return false;
         }
@@ -183,7 +207,8 @@ namespace battery
     {
         bool shouldDetach = false;
         JNIEnv *env = getEnvAttached(shouldDetach);
-        if (!env) {
+        if (!env)
+        {
             log::error("Battery: failed to get JNIEnv for isBatterySaver");
             return false;
         }
