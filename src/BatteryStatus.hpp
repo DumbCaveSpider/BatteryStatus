@@ -17,6 +17,20 @@ protected:
     bool init() override;
     static BatteryStatus *instance;
 
+    cocos2d::CCNode *m_lowBat;
+    cocos2d::CCNode *m_halfBat;
+    cocos2d::CCNode *m_fullBat;
+    cocos2d::CCNode *m_chargingBat;
+    cocos2d::CCNode *m_emptyBat;
+
+    // last known state
+    int m_lastLevel;
+    bool m_lastCharging;
+    bool m_lastSaver;
+
+    // scheduled update
+    void updateBattery(float dt);
+
 public:
     BatteryStatus();
     ~BatteryStatus();

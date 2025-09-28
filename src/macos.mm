@@ -8,6 +8,7 @@
 #import <IOKit/ps/IOPowerSources.h>
 #undef CommentType
 
+// i assume this works fine for macos users
 namespace battery
 {
 
