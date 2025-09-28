@@ -1,4 +1,6 @@
-#if defined(GEODE_IS_IOS)
+#if defined(__APPLE__)
+#import <TargetConditionals.h>
+#if (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE) && !(defined(TARGET_OS_OSX) && TARGET_OS_OSX)
 #import <UIKit/UIKit.h>
 
 namespace battery
@@ -47,4 +49,5 @@ namespace battery
         }
     }
 }
-#endif
+#endif // TARGET_OS_IPHONE
+#endif // __APPLE__

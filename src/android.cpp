@@ -1,4 +1,5 @@
 #if defined(__ANDROID__)
+#include <Geode/Geode.hpp>
 #include <Geode/cocos/platform/android/jni/JniHelper.h>
 #include <jni.h>
 

@@ -1,4 +1,6 @@
-#if defined(GEODE_IS_MACOS)
+#if defined(__APPLE__)
+#import <TargetConditionals.h>
+#if (defined(TARGET_OS_OSX) && TARGET_OS_OSX) || (defined(TARGET_OS_MAC) && TARGET_OS_MAC && !TARGET_OS_IPHONE)
 
 #define CommentType CommentTypeDummy
 #import <Foundation/Foundation.h>
@@ -160,4 +162,5 @@ namespace battery
 
 }
 
-#endif
+#endif // macOS target
+#endif // __APPLE__
