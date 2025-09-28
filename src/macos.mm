@@ -162,5 +162,5 @@ namespace battery
 
 }
 
-#endif // macOS target
-#endif // __APPLE__
+#endif
+#endif

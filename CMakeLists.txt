@@ -28,7 +28,7 @@ if(APPLE OR CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "iOS
     else()
         add_definitions(-DTARGET_OS_IPHONE=0)
     endif()
-    add_definitions(-DTARGET_IPHONE_SIMULATOR=0) # Assume not simulator by default
+    add_definitions(-DTARGET_IPHONE_SIMULATOR=0)
 else()
     set(MM_SOURCES "")
 endif()
