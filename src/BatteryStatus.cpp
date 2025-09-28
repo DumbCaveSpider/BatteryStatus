@@ -447,6 +447,14 @@ void BatteryStatus::onEnter()
                 m_percentageLabel->setAnchorPoint({0, 1});
             }
         }
+        else if (pos == "Top Center")
+        {
+            if (m_percentageLabel)
+            {
+                m_percentageLabel->setPosition({winSize.width / 2, winSize.height - 10});
+                m_percentageLabel->setAnchorPoint({0.5, 1});
+            }
+        }
         else if (pos == "Top Right")
         {
             if (m_percentageLabel)
@@ -471,12 +479,12 @@ void BatteryStatus::onEnter()
                 m_percentageLabel->setAnchorPoint({1, 0});
             }
         }
-        else if (pos == "Center")
+        else if (pos == "Bottom Center")
         {
             if (m_percentageLabel)
             {
-                m_percentageLabel->setPosition({winSize.width / 2, winSize.height / 2});
-                m_percentageLabel->setAnchorPoint({0.5, 0.5});
+                m_percentageLabel->setPosition({winSize.width / 2, 10});
+                m_percentageLabel->setAnchorPoint({0.5, 0});
             }
         }
         else if (pos == "Center Left")

@@ -2,10 +2,10 @@
 #import <TargetConditionals.h>
 #if (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE) && !(defined(TARGET_OS_OSX) && TARGET_OS_OSX)
 #import <UIKit/UIKit.h>
+#import <Geode/Geode.hpp>
 
 namespace battery
 {
-
     int getBatteryLevel()
     {
         @autoreleasepool
@@ -18,6 +18,7 @@ namespace battery
             }
 
             float level = d.batteryLevel;
+            log::debug("iOS battery level: {}", level);
             if (level < 0.0f)
                 return -1;
             return static_cast<int>(level * 100.0f);

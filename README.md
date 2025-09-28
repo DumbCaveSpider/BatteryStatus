@@ -5,7 +5,7 @@ Shows and display your device's battery status in game.
 ## Features
 
 - <cy>Shows your device battery percentage</c>
-- <cy>Change the battery status display (icon, text or progress bar)</c>
+- <cy>Change the battery status display (icon or percentage)</c>
 - <cy>Highly customizable (colors, position, size, etc)</c>
 
 ### Supported Devices
