@@ -6,154 +6,159 @@
 #import <IOKit/ps/IOPowerSources.h>
 #undef CommentType
 
-int getBatteryLevel()
+namespace battery
 {
-    @autoreleasepool
+
+    int getBatteryLevel()
     {
-        CFTypeRef powerSourceInfo = IOPSCopyPowerSourcesInfo();
-        if (!powerSourceInfo)
-            return -1;
-
-        CFArrayRef powerSources = IOPSCopyPowerSourcesList(powerSourceInfo);
-        if (!powerSources)
+        @autoreleasepool
         {
-            CFRelease(powerSourceInfo);
-            return -1;
-        }
+            CFTypeRef powerSourceInfo = IOPSCopyPowerSourcesInfo();
+            if (!powerSourceInfo)
+                return -1;
 
-        CFIndex count = CFArrayGetCount(powerSources);
-        if (count == 0)
-        {
-            CFRelease(powerSources);
-            CFRelease(powerSourceInfo);
-            return -1;
-        }
-
-        CFDictionaryRef powerSource = NULL;
-        for (CFIndex i = 0; i < count; i++)
-        {
-            powerSource = (CFDictionaryRef)CFArrayGetValueAtIndex(powerSources, i);
-            CFStringRef powerSourceState =
-                (CFStringRef)CFDictionaryGetValue(powerSource, CFSTR(kIOPSTypeKey));
-
-            if (powerSourceState &&
-                CFEqual(powerSourceState, CFSTR(kIOPSInternalBatteryType)))
+            CFArrayRef powerSources = IOPSCopyPowerSourcesList(powerSourceInfo);
+            if (!powerSources)
             {
-                break;
+                CFRelease(powerSourceInfo);
+                return -1;
             }
-            powerSource = NULL;
-        }
 
-        if (!powerSource)
-        {
+            CFIndex count = CFArrayGetCount(powerSources);
+            if (count == 0)
+            {
+                CFRelease(powerSources);
+                CFRelease(powerSourceInfo);
+                return -1;
+            }
+
+            CFDictionaryRef powerSource = NULL;
+            for (CFIndex i = 0; i < count; i++)
+            {
+                powerSource = (CFDictionaryRef)CFArrayGetValueAtIndex(powerSources, i);
+                CFStringRef powerSourceState =
+                    (CFStringRef)CFDictionaryGetValue(powerSource, CFSTR(kIOPSTypeKey));
+
+                if (powerSourceState &&
+                    CFEqual(powerSourceState, CFSTR(kIOPSInternalBatteryType)))
+                {
+                    break;
+                }
+                powerSource = NULL;
+            }
+
+            if (!powerSource)
+            {
+                CFRelease(powerSources);
+                CFRelease(powerSourceInfo);
+                return -1;
+            }
+
+            CFNumberRef currentCapacity = (CFNumberRef)CFDictionaryGetValue(
+                powerSource, CFSTR(kIOPSCurrentCapacityKey));
+            CFNumberRef maxCapacity = (CFNumberRef)CFDictionaryGetValue(
+                powerSource, CFSTR(kIOPSMaxCapacityKey));
+
+            int currentValue = 0;
+            int maxValue = 0;
+
+            if (currentCapacity && maxCapacity &&
+                CFNumberGetValue(currentCapacity, kCFNumberIntType, &currentValue) &&
+                CFNumberGetValue(maxCapacity, kCFNumberIntType, &maxValue) &&
+                maxValue > 0)
+            {
+
+                int percentage =
+                    static_cast<int>((float)currentValue / (float)maxValue * 100.0f);
+
+                CFRelease(powerSources);
+                CFRelease(powerSourceInfo);
+
+                return percentage;
+            }
+
             CFRelease(powerSources);
             CFRelease(powerSourceInfo);
-            return -1;
         }
 
-        CFNumberRef currentCapacity = (CFNumberRef)CFDictionaryGetValue(
-            powerSource, CFSTR(kIOPSCurrentCapacityKey));
-        CFNumberRef maxCapacity = (CFNumberRef)CFDictionaryGetValue(
-            powerSource, CFSTR(kIOPSMaxCapacityKey));
-
-        int currentValue = 0;
-        int maxValue = 0;
-
-        if (currentCapacity && maxCapacity &&
-            CFNumberGetValue(currentCapacity, kCFNumberIntType, &currentValue) &&
-            CFNumberGetValue(maxCapacity, kCFNumberIntType, &maxValue) &&
-            maxValue > 0)
-        {
-
-            int percentage =
-                static_cast<int>((float)currentValue / (float)maxValue * 100.0f);
-
-            CFRelease(powerSources);
-            CFRelease(powerSourceInfo);
-
-            return percentage;
-        }
-
-        CFRelease(powerSources);
-        CFRelease(powerSourceInfo);
+        return -1;
     }
 
-    return -1;
-}
-
-bool isCharging()
-{
-    @autoreleasepool
+    bool isCharging()
     {
-        CFTypeRef powerSourceInfo = IOPSCopyPowerSourcesInfo();
-        if (!powerSourceInfo)
-            return false;
-
-        CFArrayRef powerSources = IOPSCopyPowerSourcesList(powerSourceInfo);
-        if (!powerSources)
+        @autoreleasepool
         {
-            CFRelease(powerSourceInfo);
-            return false;
-        }
+            CFTypeRef powerSourceInfo = IOPSCopyPowerSourcesInfo();
+            if (!powerSourceInfo)
+                return false;
 
-        CFIndex count = CFArrayGetCount(powerSources);
-        if (count == 0)
-        {
+            CFArrayRef powerSources = IOPSCopyPowerSourcesList(powerSourceInfo);
+            if (!powerSources)
+            {
+                CFRelease(powerSourceInfo);
+                return false;
+            }
+
+            CFIndex count = CFArrayGetCount(powerSources);
+            if (count == 0)
+            {
+                CFRelease(powerSources);
+                CFRelease(powerSourceInfo);
+                return false;
+            }
+
+            CFDictionaryRef powerSource = NULL;
+            for (CFIndex i = 0; i < count; i++)
+            {
+                powerSource = (CFDictionaryRef)CFArrayGetValueAtIndex(powerSources, i);
+                CFStringRef powerSourceState =
+                    (CFStringRef)CFDictionaryGetValue(powerSource, CFSTR(kIOPSTypeKey));
+
+                if (powerSourceState &&
+                    CFEqual(powerSourceState, CFSTR(kIOPSInternalBatteryType)))
+                {
+                    break;
+                }
+                powerSource = NULL;
+            }
+
+            if (!powerSource)
+            {
+                CFRelease(powerSources);
+                CFRelease(powerSourceInfo);
+                return false;
+            }
+
+            CFStringRef charging = (CFStringRef)CFDictionaryGetValue(
+                powerSource, CFSTR(kIOPSPowerSourceStateKey));
+
+            bool isCharging = charging && CFEqual(charging, CFSTR(kIOPSACPowerValue));
+
             CFRelease(powerSources);
             CFRelease(powerSourceInfo);
-            return false;
+
+            return isCharging;
         }
-
-        CFDictionaryRef powerSource = NULL;
-        for (CFIndex i = 0; i < count; i++)
-        {
-            powerSource = (CFDictionaryRef)CFArrayGetValueAtIndex(powerSources, i);
-            CFStringRef powerSourceState =
-                (CFStringRef)CFDictionaryGetValue(powerSource, CFSTR(kIOPSTypeKey));
-
-            if (powerSourceState &&
-                CFEqual(powerSourceState, CFSTR(kIOPSInternalBatteryType)))
-            {
-                break;
-            }
-            powerSource = NULL;
-        }
-
-        if (!powerSource)
-        {
-            CFRelease(powerSources);
-            CFRelease(powerSourceInfo);
-            return false;
-        }
-
-        CFStringRef charging = (CFStringRef)CFDictionaryGetValue(
-            powerSource, CFSTR(kIOPSPowerSourceStateKey));
-
-        bool isCharging = charging && CFEqual(charging, CFSTR(kIOPSACPowerValue));
-
-        CFRelease(powerSources);
-        CFRelease(powerSourceInfo);
-
-        return isCharging;
     }
-}
 
-bool isBatterySaver()
-{
-    @autoreleasepool
+    bool isBatterySaver()
     {
-        // macOS 10.14+ supports Low Power Mode
-        if (@available(macOS 10.14, *))
+        @autoreleasepool
         {
-            NSProcessInfo *processInfo = [NSProcessInfo processInfo];
-            if (@available(macOS 12.0, *))
+            // macOS 10.14+ supports Low Power Mode
+            if (@available(macOS 10.14, *))
             {
-                return processInfo.lowPowerModeEnabled;
+                NSProcessInfo *processInfo = [NSProcessInfo processInfo];
+                if (@available(macOS 12.0, *))
+                {
+                    return processInfo.lowPowerModeEnabled;
+                }
+                return false;
             }
             return false;
         }
-        return false;
     }
+
 }
 
 #endif
