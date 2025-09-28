@@ -104,6 +104,12 @@ void BatteryStatus::updateBattery(float dt)
     // show icon if the type is set to icon
     if (type == "Icon")
     {
+        // hide percentage label if exists
+        if (m_percentageLabel)
+        {
+            m_percentageLabel->setVisible(false);
+        }
+        
         // default colors
         m_fullBat->setColor({0, 255, 0});
         m_halfBat->setColor({255, 255, 0});
