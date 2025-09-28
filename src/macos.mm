@@ -1,4 +1,4 @@
-#if defined(__APPLE__)
+#if defined(GEODE_IS_MACOS)
 
 #define CommentType CommentTypeDummy
 #import <Foundation/Foundation.h>

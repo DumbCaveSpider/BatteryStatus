@@ -1,6 +1,4 @@
-#if defined(__APPLE__)
-#include <TargetConditionals.h>
-#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+#if defined(GEODE_IS_IOS)
 #import <UIKit/UIKit.h>
 
 namespace battery
