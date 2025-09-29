@@ -79,6 +79,8 @@ bool BatteryStatus::init()
 
 void BatteryStatus::updateBattery(float dt)
 {
+    // delay to ensure context is initialized
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     int level = battery::getBatteryLevel();
     bool charging = battery::isCharging();
     bool saver = battery::isBatterySaver();
