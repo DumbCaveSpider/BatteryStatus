@@ -38,26 +38,38 @@ namespace
     }
 
     jobject getContext(JNIEnv *env) {
-            log::debug("getContext() called");
-        if (jclass helperCls = env->FindClass("org/cocos2dx/lib/Cocos2dxHelper")) {
-            if (jmethodID mid = env->GetStaticMethodID(helperCls, "getActivity", "()Landroid/app/Activity;")) {
-                if (jobject activity = env->CallStaticObjectMethod(helperCls, mid)) {
-                        log::debug("Got Activity context via Cocos2dxHelper.getActivity()");
-                    return activity; // use as Context
+        log::debug("getContext() called");
+        constexpr int maxAttempts = 10;
+        constexpr int sleepMs = 100;
+        for (int attempt = 1; attempt <= maxAttempts; ++attempt) {
+            // Cocos2dxHelper.getActivity()
+            if (jclass helperCls = env->FindClass("org/cocos2dx/lib/Cocos2dxHelper")) {
+                if (jmethodID mid = env->GetStaticMethodID(helperCls, "getActivity", "()Landroid/app/Activity;")) {
+                    if (jobject activity = env->CallStaticObjectMethod(helperCls, mid)) {
+                        log::debug("Got Activity context via Cocos2dxHelper.getActivity() on attempt {}", attempt);
+                        return activity;
+                    }
                 }
+                env->ExceptionClear();
             }
-            env->ExceptionClear();
-        }
-        if (jclass actCls = env->FindClass("org/cocos2dx/lib/Cocos2dxActivity")) {
-            if (jmethodID mid = env->GetStaticMethodID(actCls, "getContext", "()Landroid/content/Context;")) {
-                if (jobject ctx = env->CallStaticObjectMethod(actCls, mid)) {
-                        log::debug("Got Context via Cocos2dxActivity.getContext()");
-                    return ctx;
+            //Cocos2dxActivity.getContext()
+            if (jclass actCls = env->FindClass("org/cocos2dx/lib/Cocos2dxActivity")) {
+                if (jmethodID mid = env->GetStaticMethodID(actCls, "getContext", "()Landroid/content/Context;")) {
+                    if (jobject ctx = env->CallStaticObjectMethod(actCls, mid)) {
+                        log::debug("Got Context via Cocos2dxActivity.getContext() on attempt {}", attempt);
+                        return ctx;
+                    }
                 }
+                env->ExceptionClear();
             }
-            env->ExceptionClear();
+            log::debug("Context not available, attempt {}/{}", attempt, maxAttempts);
+            #if defined(__ANDROID__)
+            // sleep for a short time before retrying
+            timespec ts = {0, sleepMs * 1000000};
+            nanosleep(&ts, nullptr);
+            #endif
         }
-            log::debug("Failed to acquire Android Context");
+        log::debug("Failed to acquire Android Context after {} attempts", maxAttempts);
         return nullptr;
     }
 
