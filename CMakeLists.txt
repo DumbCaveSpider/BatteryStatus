@@ -60,3 +60,9 @@ if(APPLE)
         target_link_libraries(${PROJECT_NAME} "-framework Foundation" "-framework IOKit")
     endif()
 endif()
+
+# android test
+if(ANDROID)
+    message(STATUS "Configuring Android specific link libraries")
+    target_link_libraries(${PROJECT_NAME} log android)
+endif()
