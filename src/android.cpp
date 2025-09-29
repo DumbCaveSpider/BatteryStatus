@@ -19,7 +19,18 @@ namespace
 {
     JNIEnv *getEnv()
     {
-        return cocos2d::JniHelper::getEnv();
+        JNIEnv* env = nullptr;
+        auto vm = cocos2d::JniHelper::getJavaVM();
+        if (!vm) return nullptr;
+        jint res = vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6);
+        if (res == JNI_EDETACHED) {
+            if (vm->AttachCurrentThread(&env, nullptr) != JNI_OK) {
+                return nullptr;
+            }
+        } else if (res != JNI_OK) {
+            return nullptr;
+        }
+        return env;
     }
 
     jobject getContext(JNIEnv *env) {
