@@ -83,9 +83,9 @@ void BatteryStatus::updateBattery(float dt)
     bool charging = battery::isCharging();
     bool saver = battery::isBatterySaver();
 
-    int lowThreshold = Mod::get()->getSettingValue<int>("lowThreshold");
-    int mediumThreshold = Mod::get()->getSettingValue<int>("mediumThreshold");
-    int highThreshold = Mod::get()->getSettingValue<int>("highThreshold");
+    int lowThreshold = Mod::get()->getSettingValue<int64_t>("lowThreshold");
+    int mediumThreshold = Mod::get()->getSettingValue<int64_t>("mediumThreshold");
+    int highThreshold = Mod::get()->getSettingValue<int64_t>("highThreshold");
 
     auto type = Mod::get()->getSettingValue<std::string>("displayStatus");
     auto pos = Mod::get()->getSettingValue<std::string>("position");
@@ -298,8 +298,8 @@ void BatteryStatus::onEnter()
     // position for all sprites
     auto winSize = CCDirector::sharedDirector()->getWinSize();
     auto pos = Mod::get()->getSettingValue<std::string>("position");
-    int opacity = Mod::get()->getSettingValue<int>("opacity");
-    float scale = Mod::get()->getSettingValue<float>("scale");
+    int64_t opacity = Mod::get()->getSettingValue<int64_t>("opacity");
+    double scale = Mod::get()->getSettingValue<double>("scale");
     auto type = Mod::get()->getSettingValue<std::string>("displayStatus");
 
     log::debug("BatteryStatus::onEnter - type={} position={} scale={} opacity={}", type, pos, scale, opacity);
@@ -561,7 +561,7 @@ void BatteryStatus::onEnter()
     }
 
     // run an immediate update then schedule periodic checks every 1 second
-    float checkRate = Mod::get()->getSettingValue<float>("checkRate");
+    double checkRate = Mod::get()->getSettingValue<double>("checkRate");
     updateBattery(0);
     this->schedule(schedule_selector(BatteryStatus::updateBattery), checkRate);
 }
